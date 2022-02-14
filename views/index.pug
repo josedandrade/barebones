@@ -1,0 +1,19 @@
+extends layout
+
+block layout-content
+  div.View.WelcomeView
+    h1.Banner Milton IA Responde
+    div.Message
+      div.Title
+        h2 Inteligencia Artificial
+        h1 para el Mundo Jurídico
+      span.Details Un servicio de LegalDesign.DO
+    div.NavButtons
+      if isAuthenticated
+        a(href="/user")
+          div.NavButton Ver Perfil
+        a(href="/answer")
+          div.NavButton Consultar
+      else
+        a(href="/login")
+          div.NavButton Acceder

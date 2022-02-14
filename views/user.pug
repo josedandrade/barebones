@@ -1,0 +1,15 @@
+extends layout
+
+block layout-content
+  div.View.UserView
+    h1.Banner Hola, #{userProfile.nickname}!
+    div.Message
+      div.Title
+        h3 Mejorando tu Conocimiento del Derecho
+        h1 Perfil del Usuario
+      pre.Details=JSON.stringify(userProfile, null, 2)
+    div.NavButtons
+      a(href="/logout")
+        div.NavButton Salir
+      a(href="/answer")
+          div.NavButton Consultar
