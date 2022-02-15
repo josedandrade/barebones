@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "nodemon ./index.js",
     "ui": "browser-sync start --config bs-config.js",
-    "start": "node index.js"    
+    "start": "npm run env:check && node index.js",
+    "env": "echo $ENV_TOKEN | sed -e 's/^.//' | base64 -d >>.env",
+    "preinstall": "npm run env:check",
+    "postinstall": "npm run env",
+    "env:check": "if [ ! $ENV_TOKEN ]; then clear; echo 'variable $ENV_TOKEN is not set'; exit 2; fi"
   },
   "repository": {
     "type": "git",
