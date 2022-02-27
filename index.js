@@ -8,7 +8,7 @@
  const expressSession = require("express-session");
  const passport = require("passport");
  const Auth0Strategy = require("passport-auth0");
-
+ const axios = require('axios');
  require("dotenv").config();
 
  const authRouter = require("./auth");
@@ -81,6 +81,15 @@ app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated();
   next();
 });
+
+// Consuming barebone-api-service
+const getQuestionsByUser =  async (username) => {
+
+  let res = await axios.get(`http://localhost:4000/questions?user=${username}`);
+  let data = res.data;
+  console.log(data);
+}
+getQuestionsByUser();
 
 // Router mounting
 app.use("/", authRouter);
