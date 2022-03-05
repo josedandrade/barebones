@@ -3,48 +3,48 @@
 /**
  * Required External Modules
  */
- const express = require("express");
- const path = require("path");
- const expressSession = require("express-session");
- const passport = require("passport");
- const Auth0Strategy = require("passport-auth0");
- const axios = require('axios');
- require("dotenv").config();
+const express = require("express");
+const path = require("path");
+const expressSession = require("express-session");
+const passport = require("passport");
+const Auth0Strategy = require("passport-auth0");
+const axios = require('axios');
+require("dotenv").config();
 
- const authRouter = require("./auth");
+const authRouter = require("./auth");
 
 /**
  * App Variables
  */
- const app = express();
- const port = process.env.PORT || "8080";
+const app = express();
+const port = process.env.PORT || "8080";
 
- /**
- * Session Configuration (New!)
- */
-  const session = {
-    secret: process.env.SESSION_SECRET,
-    cookie: {},
-    resave: false,
-    saveUninitialized: false
-  };
-  
-  if (app.get("env") === "production") {
-    // Serve secure cookies, requires HTTPS
-    session.cookie.secure = true;
-  }
+/**
+* Session Configuration (New!)
+*/
+const session = {
+  secret: process.env.SESSION_SECRET,
+  cookie: {},
+  resave: false,
+  saveUninitialized: false
+};
+
+if (app.get("env") === "production") {
+  // Serve secure cookies, requires HTTPS
+  session.cookie.secure = true;
+}
 
 /**
  * Passport Configuration (New!)
  */
- const strategy = new Auth0Strategy(
+const strategy = new Auth0Strategy(
   {
     domain: process.env.AUTH0_DOMAIN,
     clientID: process.env.AUTH0_CLIENT_ID,
     clientSecret: process.env.AUTH0_CLIENT_SECRET,
     callbackURL: process.env.AUTH0_CALLBACK_URL
   },
-  function(accessToken, refreshToken, extraParams, profile, done) {
+  function (accessToken, refreshToken, extraParams, profile, done) {
     /**
      * Access tokens are used to authorize users to an API
      * (resource server)
@@ -60,15 +60,15 @@
 /**
  *  App Configuration
  */
- app.set("views", path.join(__dirname, "views"));
- app.set("view engine", "pug");
- app.use(express.static(path.join(__dirname, "public")));
- app.use(expressSession(session));
- passport.use(strategy);
- app.use(passport.initialize());
- app.use(passport.session());
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "pug");
+app.use(express.static(path.join(__dirname, "public")));
+app.use(expressSession(session));
+passport.use(strategy);
+app.use(passport.initialize());
+app.use(passport.session());
 
- passport.serializeUser((user, done) => {
+passport.serializeUser((user, done) => {
   done(null, user);
 });
 
@@ -82,14 +82,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Consuming barebone-api-service
-const getQuestionsByUser =  async (username) => {
-
-  let res = await axios.get(`http://localhost:4000/questions?user=${username}`);
-  let data = res.data;
-  console.log(data);
+// Consuming barebone-api-service\
+const getQuestionsByUser = async (user) => {
+  let res = await axios.get(`http://localhost:4000/questions?username=${user}`);
+  data = res.data;
+  return data
 }
-getQuestionsByUser();
+
 
 // Router mounting
 app.use("/", authRouter);
@@ -106,7 +105,7 @@ const secured = (req, res, next) => {
 };
 
 app.get("/", (req, res) => {
-    res.render("index", { title: "Home" });
+  res.render("index", { title: "Home" });
 });
 
 app.get("/user", (req, res) => {
@@ -114,15 +113,19 @@ app.get("/user", (req, res) => {
   res.render("user", {
     title: "Perfil",
     userProfile: userProfile
-  });  
+  });
 });
 
-app.get("/answer", (req, res) => {
-  const { _raw, _json, ...userProfile } = req.user;
+app.get("/answer", async (req, res) => {
+  // const { _raw, _json, ...userProfile } = req.user;
+  let questions = await getQuestionsByUser("richardhc");
+  questions = questions.message;
+
   res.render("answer", {
     title: "Consulta",
-    userProfile: userProfile
-  });  
+    userProfile: "hello",
+    questionList: questions
+  });
 });
 
 /**

@@ -1,24 +1,35 @@
 extends layout
-
 block layout-content
   div.View.UserView
     h1.Banner #{userProfile.nickname}: Ingresa tu pregunta
     div.Message
       div.Title
         h1 Milton IA Responde
-        h3 Derecho Constitucional con Inteligencia Artificial              
-        form.uk-grid-collapse(uk-grid='')
-          .uk-width-1-1
-            input#question.uk-input.uk-width-1-2(type='text')
-            button.uk-button.uk-button-default.uk-width-1-5(type='submit') Pregunta
-        .uk-container.uk-text-center.uk-padding
-        .uk-inline
-          #answer.uk-flex.uk-flex-center.uk-flex-middle.uk-padding.uk-width-expand
+        h2 Derecho Constitucional con Inteligencia Artificial   
+
+      
+        div.form-group.row
+          form.form-inline
+            input.form-control(type='text', placeholder='Escriba su pregunta')
+            button.btn.btn-primary(type='submit') Enviar
+
+      div.container
+        h3 Ultimas preguntas realizadas
+          table.table.table-hover
+            tbody
+              tr
+                th #
+                th Usuario 
+                th Pregunta
+                th Respuesta
+              each service, key in questionList
+                tr
+                  th=key+1
+                    td=service.username 
+                    td=service.question 
+                    td=service.answer 
+
     div.NavButtons
       a(href="/logout")
         div.NavButton Salir
 
-//- script(src='https://unpkg.com/axios/dist/axios.min.js')
-//- script(src='https://cdn.jsdelivr.net/npm/uikit@3.6.22/dist/js/uikit.min.js')
-//- script(src='https://cdn.jsdelivr.net/npm/uikit@3.6.22/dist/js/uikit-icons.min.js')
-//- script(src='/javascripts/script.js')
